@@ -105,11 +105,22 @@ export class DependencyChecker {
         const previousPackageHashesPath = path.resolve(this.rootPath, this.outputFile);
         const previousPackageHashes = await fs.promises.readFile(previousPackageHashesPath).catch(err => {return '[]';});
         const oldHashValues = JSON.parse(previousPackageHashes.toString());
-        let hashMatch: boolean;
-        for (const hsh of hashValues){
-            hashMatch = oldHashValues.includes(hsh)
-            if (!hashMatch) break;
+
+        // Sort both arrays for consistent comparison
+        const sortedNewHashes = [...hashValues].sort();
+        const sortedOldHashes = [...oldHashValues].sort();
+
+        // Check if arrays have same length and all elements match
+        let hashMatch = sortedNewHashes.length === sortedOldHashes.length;
+        if (hashMatch) {
+            for (let i = 0; i < sortedNewHashes.length; i++) {
+                if (sortedNewHashes[i] !== sortedOldHashes[i]) {
+                    hashMatch = false;
+                    break;
+                }
+            }
         }
+
         const newHashData = JSON.stringify(hashValues);
         await this.writeFile(previousPackageHashesPath, newHashData);
         const depRecord: IDependencyRecord = {

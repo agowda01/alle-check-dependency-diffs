@@ -135,11 +135,16 @@ class DependencyChecker {
             const previousPackageHashesPath = path.resolve(this.rootPath, this.outputFile);
             const previousPackageHashes = yield fs.promises.readFile(previousPackageHashesPath).catch(err => { return '[]'; });
             const oldHashValues = JSON.parse(previousPackageHashes.toString());
-            let hashMatch;
-            for (const hsh of hashValues) {
-                hashMatch = oldHashValues.includes(hsh);
-                if (!hashMatch)
-                    break;
+            const sortedNewHashes = [...hashValues].sort();
+            const sortedOldHashes = [...oldHashValues].sort();
+            let hashMatch = sortedNewHashes.length === sortedOldHashes.length;
+            if (hashMatch) {
+                for (let i = 0; i < sortedNewHashes.length; i++) {
+                    if (sortedNewHashes[i] !== sortedOldHashes[i]) {
+                        hashMatch = false;
+                        break;
+                    }
+                }
             }
             const newHashData = JSON.stringify(hashValues);
             yield this.writeFile(previousPackageHashesPath, newHashData);
