@@ -1,0 +1,59 @@
+name: Example - Check Dependencies and Run Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-and-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need at least 2 commits for git comparison
+
+      - name: Check for dependency changes
+        id: check-deps
+        uses: ./  # Use this if testing locally, or use your-org/check-package-dependency-changes@v1
+        with:
+          packages-file-name: 'package-lock.json'
+          project-root-directory: '.'
+          check-git: true
+
+      - name: Setup Node.js
+        if: steps.check-deps.outputs.dependency-changed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        if: steps.check-deps.outputs.dependency-changed == 'true'
+        run: npm ci
+
+      - name: Run security audit
+        if: steps.check-deps.outputs.dependency-changed == 'true'
+        run: npm audit --audit-level=moderate
+
+      - name: Run dependency check
+        if: steps.check-deps.outputs.dependency-changed == 'true'
+        run: npm run check-deps || true
+
+      - name: Comment on PR
+        if: steps.check-deps.outputs.dependency-changed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ Dependencies have changed in this PR. Security scans have been executed.'
+            })
+
+      - name: Skip message
+        if: steps.check-deps.outputs.dependency-changed == 'false'
+        run: echo "No dependency changes detected. Skipping security scans."

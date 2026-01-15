@@ -1,0 +1,21 @@
+{
+    "version": 3,
+    "targets": {
+        "testfile1":{
+            "nothinghere": 3,
+            "orhere": "nothing"
+        }
+    },
+    "libraries":{
+
+    },
+    "projectFileDependencyGroups":{
+
+    },
+    "packageFolders":{
+
+    },
+    "project":{
+
+    }
+}

@@ -1,0 +1,36 @@
+name: 'Check Package Dependency Changes'
+description: 'Detects changes to package dependencies to determine whether to run tasks like security dependency scanners'
+author: 'ProductTech'
+branding:
+  icon: 'package'
+  color: 'blue'
+
+inputs:
+  packages-file-name:
+    description: 'File name of package file (e.g., package-lock.json, project.assets.json)'
+    required: true
+  output-file-name:
+    description: 'Name of JSON file to output with file hashes'
+    required: false
+    default: 'previous.json'
+  project-root-directory:
+    description: 'File path to root of the project source code where package files are located'
+    required: true
+  check-git:
+    description: 'Check git for changes to package files in the repository'
+    required: false
+    default: 'false'
+  check-directory-files:
+    description: 'Check directory files for changes by comparing file hashes'
+    required: false
+    default: 'false'
+
+outputs:
+  dependency-changed:
+    description: 'Whether dependencies have changed (true/false)'
+  hash-record-path:
+    description: 'Path to the file containing hash records (when check-directory-files is true)'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

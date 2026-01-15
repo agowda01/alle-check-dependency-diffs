@@ -1,0 +1,43 @@
+# Dependency directories
+node_modules/
+
+# Build output
+# Note: dist/ should NOT be ignored for GitHub Actions!
+# The compiled dist/index.js must be committed for the action to work.
+# Uncomment the line below only during development if needed:
+# dist/
+
+# Test coverage
+coverage/
+*.lcov
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package lock files (optional - uncomment if you want to ignore)
+# package-lock.json
+# yarn.lock
