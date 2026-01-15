@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
+import artifact from '@actions/artifact';
 import { DependencyChecker } from './service/DependencyChecker';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -35,12 +35,11 @@ async function run(){
 
             // Upload artifact with hash file
             if (fs.existsSync(depResult.hashRecordPath)) {
-                const artifactClient = artifact.create();
                 const artifactName = 'dependency-checker-hashes';
                 const files = [depResult.hashRecordPath];
                 const rootDirectory = path.dirname(depResult.hashRecordPath);
 
-                await artifactClient.uploadArtifact(artifactName, files, rootDirectory);
+                await artifact.uploadArtifact(artifactName, files, rootDirectory);
                 core.info(`Success: artifact uploaded to ${artifactName}`);
             }
         }
