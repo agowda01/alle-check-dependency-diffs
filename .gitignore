@@ -7,6 +7,11 @@ node_modules/
 # Uncomment the line below only during development if needed:
 # dist/
 
+# Intermediate build files
+
+dist-test/
+licenses.txt
+
 # Test coverage
 coverage/
 *.lcov
